@@ -16,7 +16,15 @@
 <div class="container-fluid mt-3" id="app">
     <input type="text" class="form-control" v-model="criterioDeBusqueda"
         placeholder="Ingresar un criterio de busqueda...">
+    <input type="text" class="form-control mt-2" v-model="busquedaPorNombreCompleto"
+        placeholder="Ingresar un criterio de busqueda por nombre...">
+    <input type="text" class="form-control mt-2" v-model="busquedaPorDni"
+        placeholder="Ingresar un criterio de busqueda por DNI...">
+    <p v-if="!cumpleLengthMinimo()" class="alert alert-warning mt-2" role="alert">
+        Se deben ingresar al menos tres caracteres en todos los filtros
+    </p>
     <br>
+
     <div class="card-deck m-0">
         <div class="row">
             <div class="col" v-for="persona in personasFiltradas">
@@ -40,6 +48,8 @@
         el: '#app',
         data: {
             criterioDeBusqueda: '',
+            busquedaPorNombreCompleto: '',
+            busquedaPorDni: '',
             //Aquí, en este array es donde tienen que agregar su información
             personas: [
                 {
@@ -49,10 +59,28 @@
                     dni: "20442873"
                 },
                 {
-                    nombre: "...",
-                    apellido: "...",
-                    correo: "...",
-                    dni: "..."
+                    nombre: "Alex",
+                    apellido: "Birman",
+                    correo: "alex.birman@hotmail.com",
+                    dni: "38050449"
+                },
+                {
+                    nombre: "Alejandro",
+                    apellido: "Pérez",
+                    correo: "juan.perez@hotmail.com",
+                    dni: "38034590"
+                },
+                {
+                    nombre: "Eduardo",
+                    apellido: "Gómez",
+                    correo: "eduardo.gomez@hotmail.com",
+                    dni: "57852347"
+                },
+                {
+                    nombre: "Jimena",
+                    apellido: "Stuart",
+                    correo: "jimena.stuart@hotmail.com",
+                    dni: "87534567"
                 },
             ]
 
@@ -61,13 +89,23 @@
             personasFiltradas() {
                 return this.personas.filter((persona) => {
                     let registroCompleto = `${persona.nombre} ${persona.apellido} ${persona.dni} ${persona.correo}`
-                    return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
+                    let nombreCompleto = `${persona.nombre} ${persona.apellido}`
+                    let dni = persona.dni
+                    if (this.cumpleLengthMinimo()) {
+                        return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase()) && nombreCompleto.toLowerCase().includes(this.busquedaPorNombreCompleto.toLowerCase()) && dni.includes(this.busquedaPorDni)
+                    }
+                    else {
+                        return registroCompleto
+                    }
                 });
-            }
+            },
         },
         methods: {
             getNombreCompleto(persona) {
                 return `${persona.nombre} ${persona.apellido}`
+            },
+            cumpleLengthMinimo() {
+                return this.criterioDeBusqueda.length >= 3 && this.busquedaPorNombreCompleto.length >= 3 && this.busquedaPorDni.length >= 3
             }
         }
     });
